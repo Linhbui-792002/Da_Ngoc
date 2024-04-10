@@ -5,6 +5,8 @@ import Statistical from "./statistical";
 import CPT from "./CPT";
 import SPT from "./SPT";
 import Diagram from "./Diagram";
+import Link from "next/link";
+import { RollbackOutlined } from "@ant-design/icons";
 const Caculate = () => {
   const items: TabsProps["items"] = [
     {
@@ -15,21 +17,22 @@ const Caculate = () => {
     {
       key: "2",
       label: "Theo Phương Pháp CPT",
-      children: <CPT/>,
+      children: <CPT />,
     },
     {
       key: "3",
       label: "Phương Pháp SPT",
-      children: <SPT/>,
+      children: <SPT />,
     },
     {
-        key: "4",
-        label: "Đồ thị",
-        children: <Diagram/>,
-      },
+      key: "4",
+      label: "Đồ thị",
+      children: <Diagram />,
+    },
   ];
   return (
     <div className="container">
+      <Link href="/" className="block mt-4"><RollbackOutlined /> Nhập số liệu</Link>
       <div className="mt-4 text-xl">Kết quả tính toán sức chịu tải</div>
       <Tabs defaultActiveKey="1" type="card" size="middle" items={items} />
     </div>
