@@ -1,57 +1,21 @@
-import { Table } from "antd";
-import React from "react";
+import { useQuery } from "@src/common/hooks/useQuery";
+import { Spin, Table } from "antd";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 
 const Statistical = () => {
-  const dataSource = [
-    {
-      key: "1",
-      landType: "Đất lấp",
-      m: "-",
-      averageDepth: "0.7",
-      li: "-",
-      liti: "-",
-    },
-    {
-      key: "2",
-      landType: "Đất sét pha, dẻo mềm",
-      m: "2",
-      averageDepth: "1.7",
-      li: "2.68",
-      liti: "5.36",
-    },
-    {
-      key: "3",
-      landType: "Đất cát pha, dẻo mềm",
-      m: "2",
-      averageDepth: "1.5",
-      li: "14.35",
-      liti: "21.53",
-    },
-    {
-      key: "4",
-      landType: "Đất sét pha, dẻo cứng",
-      m: "2",
-      averageDepth: "5.2",
-      li: "37.1",
-      liti: "74.2",
-    },
-    {
-      key: "4",
-      landType: "Đất sét pha, dẻo cứng",
-      m: "2",
-      averageDepth: "7.2",
-      li: "39.9",
-      liti: "79.8",
-    },
-    {
-      key: "4",
-      landType: "Đất sét pha, dẻo cứng",
-      m: "2",
-      averageDepth: "9.2",
-      li: "41.72",
-      liti: "83.44",
-    },
-  ];
+  const router = useRouter();
+  const recordId = router.query.recordId;
+
+  const {
+    data: dataSource,
+    reload,
+    isLoading: dataSourceLoading,
+  } = useQuery(`caculate/pptk/${recordId}`);
+
+  useEffect(() => {
+    reload();
+  }, [recordId]);
 
   const columns = [
     {
@@ -63,10 +27,12 @@ const Statistical = () => {
           children: value,
           props: {} as any,
         };
-        if (index > 0 && dataSource[index - 1].key === value) {
+        if (index > 0 && dataSource?.statistical[index - 1].key === value) {
           obj.props.rowSpan = 0;
         } else {
-          const count = dataSource.filter((item) => item.key === value).length;
+          const count = dataSource?.statistical.filter(
+            (item: any) => item.key === value
+          ).length;
           obj.props.rowSpan = count;
         }
         return obj;
@@ -81,11 +47,14 @@ const Statistical = () => {
           children: value,
           props: {} as any,
         };
-        if (index > 0 && dataSource[index - 1].landType === value) {
+        if (
+          index > 0 &&
+          dataSource?.statistical[index - 1].landType === value
+        ) {
           obj.props.rowSpan = 0;
         } else {
-          const count = dataSource.filter(
-            (item) => item.landType === value
+          const count = dataSource?.statistical.filter(
+            (item: any) => item.landType === value
           ).length;
           obj.props.rowSpan = count;
         }
@@ -93,41 +62,52 @@ const Statistical = () => {
       },
     },
     {
-      title: "li (m)",
-      dataIndex: "m",
-      key: "m",
+      title: "tau (li)",
+      dataIndex: "li",
+      key: "li",
     },
     {
       title: "Độ sâu trung bình",
-      dataIndex: "averageDepth",
-      key: "averageDepth",
+      dataIndex: "avgDepth",
+      key: "avgDepth",
     },
     {
       title: "τi kN/m²",
-      dataIndex: "li",
-      key: "li",
+      dataIndex: "tau",
+      key: "tau",
     },
     {
       title: "liτi",
       dataIndex: "liti",
       key: "liti",
     },
+    {
+      title: "P ma sát",
+      dataIndex: "Pms",
+      key: "Pm",
+    },
   ];
 
   return (
-    <div>
+    <Spin spinning={dataSourceLoading}>
       <Table
-        dataSource={dataSource}
+        dataSource={dataSource?.statistical}
         columns={columns}
         pagination={false}
         bordered
       />
       <div>
         <span className="text-md font-medium mt-4 block">
-          Tổng (liτi): <span>373</span>
+          Tổng P ma sát (kN): <span>{dataSource?.totalPms}</span>
+        </span>
+        <span className="text-md font-medium mt-4 block">
+          Pmũi (kN): <span>{dataSource?.Pmui}</span>
+        </span>
+        <span className="text-md font-medium mt-4 block">
+          Pgh (kN): <span>{dataSource?.Pgh}</span>
         </span>
       </div>
-    </div>
+    </Spin>
   );
 };
 

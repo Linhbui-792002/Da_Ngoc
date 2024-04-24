@@ -9,6 +9,7 @@ export const get = async (path: string, req: AxiosRequestConfig<any> | undefined
     return response;
 };
 
+
 export const post = async (path: string, req: any, headers: AxiosRequestConfig<any> | undefined) => {
     const response = await request.post(path, req, headers);
     return response;

@@ -1,41 +1,21 @@
-import { Table } from "antd";
-import React from "react";
+import { useQuery } from "@src/common/hooks/useQuery";
+import { Spin, Table } from "antd";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 
 const CPT = () => {
-  const dataSource = [
-    {
-      key: "1",
-      landType: "Đất lấp",
-      m: "0.7",
-      a: "_",
-      ti: "-",
-      liti: "-",
-    },
-    {
-      key: "2",
-      landType: "Đất sét pha, dẻo mềm qc = 1340 kN/m²",
-      m: "0.7",
-      a: "30",
-      ti: "30",
-      liti: "31",
-    },
-    {
-      key: "3",
-      landType: "Đất cát pha, dẻo mềm qc = 1380 kN/m²",
-      m: "1.5",
-      a: "30",
-      ti: "30",
-      liti: "45",
-    },
-    {
-      key: "4",
-      landType: "Đất sét pha, dẻo cứng qc = 1730 kN/m²",
-      m: "6",
-      a: "30",
-      ti: "30",
-      liti: "180",
-    },
-  ];
+  const router = useRouter();
+  const recordId = router.query.recordId;
+
+  const {
+    data: dataSource,
+    reload,
+    isLoading: dataSourceLoading,
+  } = useQuery(`caculate/cpt/${recordId}`);
+
+  useEffect(() => {
+    reload();
+  }, [recordId]);
 
   const columns = [
     {
@@ -47,10 +27,12 @@ const CPT = () => {
           children: value,
           props: {} as any,
         };
-        if (index > 0 && dataSource[index - 1].key === value) {
+        if (index > 0 && dataSource.DataCPT[index - 1].key === value) {
           obj.props.rowSpan = 0;
         } else {
-          const count = dataSource.filter((item) => item.key === value).length;
+          const count = dataSource.DataCPT.filter(
+            (item: any) => item.key === value
+          ).length;
           obj.props.rowSpan = count;
         }
         return obj;
@@ -65,11 +47,11 @@ const CPT = () => {
           children: value,
           props: {} as any,
         };
-        if (index > 0 && dataSource[index - 1].landType === value) {
+        if (index > 0 && dataSource.DataCPT[index - 1].landType === value) {
           obj.props.rowSpan = 0;
         } else {
-          const count = dataSource.filter(
-            (item) => item.landType === value
+          const count = dataSource.DataCPT.filter(
+            (item: any) => item.landType === value
           ).length;
           obj.props.rowSpan = count;
         }
@@ -78,8 +60,8 @@ const CPT = () => {
     },
     {
       title: "li (m)",
-      dataIndex: "m",
-      key: "m",
+      dataIndex: "li",
+      key: "li",
     },
     {
       title: "αi",
@@ -96,22 +78,33 @@ const CPT = () => {
       dataIndex: "liti",
       key: "liti",
     },
+    {
+      title: "P ma sát",
+      dataIndex: "Pms",
+      key: "Pms",
+    },
   ];
 
   return (
-    <div>
+    <Spin spinning={dataSourceLoading}>
       <Table
-        dataSource={dataSource}
+        dataSource={dataSource?.DataCPT}
         columns={columns}
         pagination={false}
         bordered
       />
       <div>
         <span className="text-md font-medium mt-4 block">
-          Tổng (liτi): <span>373</span>
+          Tổng P ma sát (kN): <span>{dataSource?.totalPms}</span>
+        </span>
+        <span className="text-md font-medium mt-4 block">
+          Pmũi (kN): <span>{dataSource?.Pmui}</span>
+        </span>
+        <span className="text-md font-medium mt-4 block">
+          Pgh (kN): <span>{dataSource?.Pgh}</span>
         </span>
       </div>
-    </div>
+    </Spin>
   );
 };
 
