@@ -7,3 +7,7 @@
   margin: auto;
   overflow: auto;
 }
+
+table, thead, tbody, tr, td, th , .ant-table-container{
+  border-color: #acacac !important;
+}
