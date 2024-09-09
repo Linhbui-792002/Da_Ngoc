@@ -4,10 +4,7 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head />
-      <body>
-        <Main />
-        <NextScript />
-        <script
+      <script
           dangerouslySetInnerHTML={{
             __html: `
               var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
@@ -22,6 +19,9 @@ export default function Document() {
             `,
           }}
         />
+      <body>
+        <Main />
+        <NextScript />
       </body>
     </Html>
   )
